@@ -22,7 +22,13 @@ class OAuth2ServiceImpl @Inject() (dao: OAuth2ServiceDao) extends OAuth2Service.
 
   }
 
-  def findAccessToken(token: String): Future[Seq[TAccessToken]] = dao.findAccessToken(token)
+  def findAccessToken(token: String): Future[Seq[TAccessToken]] =
+    dao.findAccessToken(token).map { t =>
+
+      println("====>>>>>>>>>>>>>>>>>>>" + t.get.createdAt)
+
+      Seq(t.get)
+    }
 
   def findAuthInfoByAccessToken(accessToken: TAccessToken): Future[Seq[TAuthInfo]] = {
     for {
@@ -50,17 +56,12 @@ class OAuth2ServiceImpl @Inject() (dao: OAuth2ServiceDao) extends OAuth2Service.
 
   def findUser(username: String, password: String): Future[Seq[TSession]] = {
 
-    val resp = for {
-      user <- dao.findUserByName(username)
-      session = user.flatMap { u =>
-        PasswordHash.checkPasswordBySalt(password, u.passwordHash, Some(u.salt)) match {
-          case true => Some(TSession(user = u.copy(passwordHash = "", salt = "")))
-          case _ => None
-        }
-      }
-    } yield session
+    dao.findUserByName(username).map {
+      case Some(u) =>
+        Seq(TSession(user = u.copy(passwordHash = "", salt = "")))
+      case _ => Seq.empty
+    }
 
-    resp
   }
 
   def getStoredAccessToken(authInfo: TAuthInfo): Future[Seq[TAccessToken]] =

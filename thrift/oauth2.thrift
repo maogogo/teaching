@@ -21,7 +21,7 @@ struct TAccessToken {
   1: string token
   2: optional string refresh_token
   3: optional string scope
-  4: optional i64 expiresIn
+  4: optional i64 expires_in
   5: i64 createdAt  // Date
 }
 

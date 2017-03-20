@@ -15,7 +15,8 @@ class OAuth2ServiceDao @Inject() (
 
   def createAccessToken(userId: String, token: String): Future[Int] = {
     val sql = s"""INSERT INTO t_oauth_access_tokens (user_id, access_token, expires_in, created_at) 
-                    VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE access_token=?, expires=?"""
+                    VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE access_token=?, expires_in=?"""
+
     build {
       _.prepare(sql)(userId, token, 3600 * 2, new Date, token, 3600 * 2).map(executeUpdate)
     }
@@ -66,7 +67,7 @@ class OAuth2ServiceDao @Inject() (
 
   private[this] def rowToUser(row: Row): Option[TUser] =
     Some(TUser(
-      id = row("id").asString,
+      id = row("user_id").asString,
       username = row("username").asString,
       passwordHash = row("password_hash").asString,
       salt = row("salt").asString

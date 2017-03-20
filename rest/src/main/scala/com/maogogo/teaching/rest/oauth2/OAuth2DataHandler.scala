@@ -40,12 +40,21 @@ class OAuth2DataHandler @Inject() (service: OAuth2Service.FutureIface) extends D
 
   def findUser(username: String, password: String): Future[Option[TSession]] = {
     log.info(s"oauth findUser")
-    service.findUser(username, password).map(_.headOption)
+    service.findUser(username, password).map(_.headOption) handle {
+      case e: Throwable =>
+        log.error("===>>>>>>>>>>>>>>>>", e)
+        throw new Exception(e)
+    }
   }
 
   def getStoredAccessToken(authInfo: AuthInfo[TSession]): Future[Option[AccessToken]] = {
     log.info(s"oauth getStoredAccessToken")
-    service.getStoredAccessToken(authInfo).map(_.headOption)
+    service.getStoredAccessToken(authInfo).map { x =>
+
+      println("--->>>>>>>token ===>>>" + x.head.createdAt)
+      x.headOption
+
+    }
   }
 
   def refreshAccessToken(authInfo: AuthInfo[TSession], refreshToken: String): Future[AccessToken] = {
@@ -55,6 +64,9 @@ class OAuth2DataHandler @Inject() (service: OAuth2Service.FutureIface) extends D
 
   def validateClient(clientId: String, clientSecret: String, grantType: String): Future[Boolean] = {
     log.info(s"oauth validateClient")
+    println("clientid ===.>>..." + clientId)
+    println("clientSecret ===.>>..." + clientSecret)
+
     Future.value(true)
   }
 

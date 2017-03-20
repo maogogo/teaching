@@ -41,6 +41,7 @@ package object rest {
     }
 
   private[this] implicit def writeJson[A <: AnyRef](a: A): String = {
+    //println("===>>>>>" + a)
     a match {
       case Error.NotPresent(e) =>
         log.error(s"exception#${e.description}#${e}", e)
@@ -51,11 +52,12 @@ package object rest {
       case Error.NotValid(e, _) =>
         wrappedError(400, s"exception#${e.description}")
       case e: InvalidRequest =>
-        log.error(s"exception#${e.errorType}")
-        wrappedError(401, s"exception#${e.errorType}")
+        log.error(s"exception#${e.description}", e)
+        wrappedError(400, s"exception#${e.description}")
       case e: InvalidGrant =>
-        log.error(s"invalid grant exception#${e.errorType}")
-        wrappedError(401, s"exception#${e.errorType}")
+        //缺少请求参数
+        log.error(s"invalid grant exception#${e.description}", e)
+        wrappedError(401, s"exception#${e.description}")
       case e: Throwable =>
         log.error("exception", e)
         wrappedError(error = e.getMessage)

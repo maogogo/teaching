@@ -117,12 +117,15 @@ trait BaseDao { self =>
       case RawValue(_, charset, true, bytes) =>
         val br = MysqlBuf.reader(bytes)
 
-        val year = br.readUnsignedShortLE()
-        val month = br.readUnsignedByte()
-        val day = br.readUnsignedByte()
+        val year = br.readShortLE
+        val month = br.readByte
+        val day = br.readByte
+        val hour = br.readByte
+        val minite = br.readByte
+        val second = br.readByte
         val cal = Calendar.getInstance
-        cal.set(year, month - 1, day)
 
+        cal.set(year, month - 1, day, hour, minite, second)
         Option(method(cal.getTime))
     })
 
