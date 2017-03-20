@@ -1,34 +1,16 @@
-namespace java com.maogogo.teaching.oath2.thrift
-#@namespace scala com.maogogo.teaching.oath2.thrift
+namespace java com.maogogo.teaching.thrift
+#@namespace scala com.maogogo.teaching.thrift
 
 #t_oauth_user
 struct TUser {
   1: string id
   2: string username
   3: string password_hash
-  4: optional string cell_phone
-  5: string salt
-  6: string status
-  7: optional i64 created_at
-  8: optional i64 modified_at
-}
-
-#t_oauth_privileges
-struct TPrivilege {
-  1: string id
-  2: optional string parent_id
-  3: string label
-  4: string url
-  5: optional string icon
-  6: string status
-  7: optional i64 created_at
-  8: optional i64 modified_at
-}
-
-#t_user_privilege
-struct TUserPrivilege {
-  1: TUser user
-  2: TPrivilege privilege
+  4: optional string cellphone
+  5: optional string cellphone_active
+  6: optional string email
+  7: optional string email_active
+  8: string salt
 }
 
 struct TSession {
@@ -39,7 +21,7 @@ struct TAccessToken {
   1: string token
   2: optional string refresh_token
   3: optional string scope
-  4: optional i64 expiresIn
+  4: optional i64 expires_in
   5: i64 createdAt  // Date
 }
 

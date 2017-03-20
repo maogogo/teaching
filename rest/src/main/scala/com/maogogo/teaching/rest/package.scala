@@ -12,6 +12,8 @@ import org.json4s.jackson.JsonMethods._
 import com.twitter.io._
 import shapeless._
 import com.twitter.finagle.oauth2._
+import com.maogogo.teaching.thrift._
+import java.util.Date
 
 package object rest {
 
@@ -39,6 +41,7 @@ package object rest {
     }
 
   private[this] implicit def writeJson[A <: AnyRef](a: A): String = {
+    //println("===>>>>>" + a)
     a match {
       case Error.NotPresent(e) =>
         log.error(s"exception#${e.description}#${e}", e)
@@ -49,11 +52,12 @@ package object rest {
       case Error.NotValid(e, _) =>
         wrappedError(400, s"exception#${e.description}")
       case e: InvalidRequest =>
-        log.error(s"exception#${e.errorType}")
-        wrappedError(401, s"exception#${e.errorType}")
+        log.error(s"exception#${e.description}", e)
+        wrappedError(400, s"exception#${e.description}")
       case e: InvalidGrant =>
-        log.error(s"invalid grant exception#${e.errorType}")
-        wrappedError(401, s"exception#${e.errorType}")
+        //缺少请求参数
+        log.error(s"invalid grant exception#${e.description}", e)
+        wrappedError(401, s"exception#${e.description}")
       case e: Throwable =>
         log.error("exception", e)
         wrappedError(error = e.getMessage)
@@ -65,6 +69,18 @@ package object rest {
         write(Wrapped(removeHeadAndTail(cleaned)))
     }
   }
+
+  implicit def toAccessToken(at: TAccessToken) = AccessToken(at.token, at.refreshToken, at.scope, at.expiresIn, new Date(at.createdAt))
+
+  implicit def toOptionAccessToken(at: Option[TAccessToken]) = at.map(toAccessToken)
+
+  implicit def toTAccessToken(at: AccessToken) = TAccessToken(at.token, at.refreshToken, at.scope, at.expiresIn, at.createdAt.getTime)
+
+  implicit def toAuthInfo(ai: TAuthInfo) = AuthInfo[TSession](user = ai.session, ai.clientId, ai.scope, ai.redirectUri)
+
+  implicit def toOptionAuth(ai: Option[TAuthInfo]) = ai.map(toAuthInfo)
+
+  implicit def toTAuthInfo(ai: AuthInfo[TSession]) = TAuthInfo(ai.user, ai.clientId, ai.scope, ai.redirectUri)
 
   private[this] def wrappedError(status: Int = 500, error: String): String = {
     write(Wrapped("", status, Some(error)))
