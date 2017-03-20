@@ -12,6 +12,8 @@ import org.json4s.jackson.JsonMethods._
 import com.twitter.io._
 import shapeless._
 import com.twitter.finagle.oauth2._
+import com.maogogo.teaching.thrift._
+import java.util.Date
 
 package object rest {
 
@@ -65,6 +67,18 @@ package object rest {
         write(Wrapped(removeHeadAndTail(cleaned)))
     }
   }
+
+  implicit def toAccessToken(at: TAccessToken) = AccessToken(at.token, at.refreshToken, at.scope, at.expiresIn, new Date(at.createdAt))
+
+  implicit def toOptionAccessToken(at: Option[TAccessToken]) = at.map(toAccessToken)
+
+  implicit def toTAccessToken(at: AccessToken) = TAccessToken(at.token, at.refreshToken, at.scope, at.expiresIn, at.createdAt.getTime)
+
+  implicit def toAuthInfo(ai: TAuthInfo) = AuthInfo[TSession](user = ai.session, ai.clientId, ai.scope, ai.redirectUri)
+
+  implicit def toOptionAuth(ai: Option[TAuthInfo]) = ai.map(toAuthInfo)
+
+  implicit def toTAuthInfo(ai: AuthInfo[TSession]) = TAuthInfo(ai.user, ai.clientId, ai.scope, ai.redirectUri)
 
   private[this] def wrappedError(status: Int = 500, error: String): String = {
     write(Wrapped("", status, Some(error)))
