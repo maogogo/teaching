@@ -5,7 +5,7 @@ import sun.misc._
 import javax.crypto._
 
 object ThreeDesUtil {
-  
+
   private[this] val key = "HeJinOnlineHeJinOnlineHeJinOnline"
   private[this] val algorithm = "DESede"
   private[this] val ciphe = "DESede/ECB/PKCS5Padding"
@@ -33,5 +33,5 @@ object ThreeDesUtil {
     cipher.init(Cipher.DECRYPT_MODE, securekey)
     new String(cipher.doFinal(bytesrc))
   }
-  
+
 }

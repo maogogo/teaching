@@ -42,7 +42,8 @@ trait MySqlClientModule {
         high = Int.MaxValue,
         idleTime = Duration.Top,
         bufferSize = 0,
-        maxWaiters = Int.MaxValue))
+        maxWaiters = Int.MaxValue
+      ))
 
     client.withDatabase(database).newRichClient(host)
   }
@@ -52,4 +53,5 @@ trait MySqlClientModule {
 case class MySqlPool(
   partitions: Int,
   testing: Boolean = false,
-  clients: Seq[TransactionsClient])
+  clients: Seq[TransactionsClient]
+)

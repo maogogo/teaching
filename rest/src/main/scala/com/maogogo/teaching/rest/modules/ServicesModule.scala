@@ -3,6 +3,7 @@ package com.maogogo.teaching.rest.modules
 import com.twitter.inject.TwitterModule
 import com.twitter.finagle.http.filter.Cors
 import com.maogogo.teaching.common.modules._
+import com.maogogo.teaching.rest.hello.HelloEndpoints
 
 object ServicesModule extends TwitterModule with ConfigModule {
 
@@ -15,8 +16,8 @@ object ServicesModule extends TwitterModule with ConfigModule {
   }
 
   def endpoints(injector: com.twitter.inject.Injector) = {
-//    injector.instance[HelloEndpoints].endpoints :+:
-//      injector.instance[EngineEndpoints].endpoints
+    injector.instance[HelloEndpoints].endpoints
+    //      injector.instance[EngineEndpoints].endpoints
   }
 
   def filters(injector: com.twitter.inject.Injector) = {
