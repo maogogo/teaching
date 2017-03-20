@@ -21,8 +21,9 @@ package object rest {
 
   implicit val formats: Formats = DefaultFormats ++ JodaTimeSerializers.all
 
+  //Decode.instance[A, Application.Json]((buf, cs) => Try(parse(BufText.extract(buf, cs), false).extract[A]))
   implicit def decode[A: Manifest]: Decode.Json[A] =
-    Decode.instance[A, Application.Json]((buf, cs) => Try(parse(BufText.extract(buf, cs), false).extract[A]))
+    Decode.instance[A, Application.Json]((buf, cs) => Try(parse(buf.asString(cs), false).extract[A]))
 
   implicit def genCoprodUpdateRepr[T, R <: HList, Repr <: Coproduct](implicit
     coprod: HasCoproductGeneric[T],
@@ -41,7 +42,6 @@ package object rest {
     }
 
   private[this] implicit def writeJson[A <: AnyRef](a: A): String = {
-    //println("===>>>>>" + a)
     a match {
       case Error.NotPresent(e) =>
         log.error(s"exception#${e.description}#${e}", e)
