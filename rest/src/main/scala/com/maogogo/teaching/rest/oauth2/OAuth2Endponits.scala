@@ -7,6 +7,12 @@ import com.maogogo.teaching.thrift._
 import io.finch._
 import com.maogogo.teaching.rest.OAuthRestful
 
+/**
+ * auth header:
+ * 	Authorization: Bearer 2ed4e86c54cd5bb09cb56a5124d260437275e781
+ *
+ *
+ */
 class OAuth2Endponits @Inject() (val dh: DataHandler[TSession]) extends OAuthRestful {
 
   def endpoints = postToken

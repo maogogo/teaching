@@ -13,8 +13,19 @@ struct TUser {
   8: string salt
 }
 
+struct TPrivilege {
+  1: string id
+  2: optional string parent_id
+  3: string label
+  4: string url
+  5: optional string icon
+  6: string status
+  7: optional i64 created_at
+}
+
 struct TSession {
   1: TUser user
+#  2: list<TPrivilege> privileges
 }
 
 struct TAccessToken {
